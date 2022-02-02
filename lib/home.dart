@@ -19,7 +19,8 @@ class _HomePageState extends State<HomePage> {
     SearchPage(),
     AddVideoPage(),
     Messages(),
-    ProfilePage(FindUid().loginUid() as String),
+    // ProfilePage(FindUid().loginUid() as String),
+    ProfilePage('71YREC9GyJXsgo4foQi6dXi3vSC2')
   ];
 
   int page = 0;

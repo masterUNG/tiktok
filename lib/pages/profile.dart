@@ -34,7 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
     myvideos = videoscollection.where('uid', isEqualTo: widget.uid).get();
 
     // get onlineuser
-    onlineuser = FindUid().loginUid() as String;
+    // onlineuser = FindUid().loginUid() as String;
+    onlineuser = '71YREC9GyJXsgo4foQi6dXi3vSC2';
 
     // get userdata
     DocumentSnapshot userdoc = await usercollection.doc(widget.uid).get();

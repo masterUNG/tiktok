@@ -23,7 +23,8 @@ class _VideoPageState extends State<VideoPage> {
 
   initState() {
     super.initState();
-    uid = FindUid().loginUid() as String;
+    //uid = FindUid().loginUid() as String;
+    uid = '71YREC9GyJXsgo4foQi6dXi3vSC2';
     mystream = videoscollection.snapshots();
   }
 
