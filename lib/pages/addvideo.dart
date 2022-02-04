@@ -7,6 +7,8 @@ import 'package:tiktok/confirmpage.dart';
 import 'package:tiktok/variables.dart';
 
 class AddVideoPage extends StatefulWidget {
+  const AddVideoPage({Key key}) : super(key: key);
+
   @override
   _AddVideoPageState createState() => _AddVideoPageState();
 }

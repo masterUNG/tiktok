@@ -37,7 +37,7 @@ class _SignUpState extends State<SignUp> {
       );
 
       await FirebaseFirestore.instance
-          .collection('user')
+          .collection('users')
           .doc(value.user.uid)
           .set(userModel.toMap())
           .then((value) => Navigator.pushAndRemoveUntil(

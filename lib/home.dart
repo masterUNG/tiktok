@@ -7,23 +7,23 @@ import 'package:tiktok/pages/search.dart';
 import 'package:tiktok/pages/videos.dart';
 import 'package:tiktok/utility/finduid.dart';
 import 'package:tiktok/variables.dart';
+import 'package:tiktok/widgets/show_progress.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List pageoptions = [
-    VideoPage(),
-    SearchPage(),
-    AddVideoPage(),
-    Messages(),
-    // ProfilePage(FindUid().loginUid() as String),
-    ProfilePage('71YREC9GyJXsgo4foQi6dXi3vSC2')
-  ];
+  var pageoptions = <Widget>[];
+  bool load = true;
 
   int page = 0;
+
+  String uidLogin;
+
   customicon() {
     return Container(
       width: 45,
@@ -61,9 +61,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setupPageOption();
+  }
+
+  Future<void> setupPageOption() async {
+    await FindUid().loginUid().then((value) {
+      setState(() {
+        load = false;
+      });
+      print('uidLogin = $uidLogin');
+
+      pageoptions.add(VideoPage(uid: uidLogin,));
+      // pageoptions.add(Text('Test'));
+      pageoptions.add(SearchPage());
+      pageoptions.add(AddVideoPage());
+      pageoptions.add(Messages());
+      pageoptions.add(ProfilePage(uidLogin));
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pageoptions[page],
+      body: load ? const ShowProgress() : pageoptions[page],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: (index) {

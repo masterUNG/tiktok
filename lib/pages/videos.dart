@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,13 +7,20 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+
 import 'package:tiktok/pages/comments.dart';
 import 'package:tiktok/utility/finduid.dart';
 import 'package:tiktok/variables.dart';
 import 'package:tiktok/widgets/circleanimation.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoPage extends StatefulWidget {
+  final String uid;
+  const VideoPage({
+    Key key,
+    @required this.uid,
+  }) : super(key: key);
+
   @override
   _VideoPageState createState() => _VideoPageState();
 }
@@ -24,7 +32,7 @@ class _VideoPageState extends State<VideoPage> {
   initState() {
     super.initState();
     //uid = FindUid().loginUid() as String;
-    uid = '71YREC9GyJXsgo4foQi6dXi3vSC2';
+    uid = widget.uid;
     mystream = videoscollection.snapshots();
   }
 
@@ -330,12 +338,15 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     videoPlayerController.dispose();
   }
 
+ 
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: VideoPlayer(videoPlayerController),
+     
     );
   }
 }

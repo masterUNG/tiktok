@@ -1,9 +1,12 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/utility/finduid.dart';
+import 'package:tiktok/widgets/show_progress.dart';
 import 'package:video_player/video_player.dart';
 
 import 'variables.dart';
@@ -36,7 +39,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
     controller.initialize();
     controller.play();
     controller.setVolume(1);
-    controller.setLooping(true);
+    controller.setLooping(false);
     print(widget.videopath_astring);
   }
 
@@ -87,7 +90,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
       isuploading = true;
     });
     try {
-      var firebaseuseruid = FindUid().loginUid() as String;
+      var firebaseuseruid = await FindUid().loginUid();
+      print('uploadvideo firebaseuseruid ==>> $firebaseuseruid');
+
       DocumentSnapshot userdoc =
           await usercollection.doc(firebaseuseruid).get();
       var alldocs = await videoscollection.get();
@@ -108,6 +113,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
         'previewimage': previewimage
       });
       Navigator.pop(context);
+
     } catch (e) {
       print(e);
     }
@@ -122,20 +128,16 @@ class _ConfirmPageState extends State<ConfirmPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Uploading......", style: mystyle(25)),
-                  SizedBox(height: 20),
-                  CircularProgressIndicator(),
+                  const SizedBox(height: 20),
+                  const ShowProgress(),
                 ],
               ),
             )
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 1.5,
-                    child: VideoPlayer(controller),
-                  ),
-                  SizedBox(
+                  newVideo(context),
+                  const SizedBox(
                     height: 20,
                   ),
                   SingleChildScrollView(
@@ -145,7 +147,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width / 2,
-                          margin: EdgeInsets.only(left: 10, right: 10),
+                          margin: const EdgeInsets.only(left: 10, right: 10),
                           child: TextField(
                             controller: musicontroller,
                             decoration: InputDecoration(
@@ -153,7 +155,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
                                 fillColor: Colors.white,
                                 labelText: "Song name",
                                 labelStyle: mystyle(20),
-                                prefixIcon: Icon(Icons.music_note),
+                                prefixIcon: const Icon(Icons.music_note),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20))),
                           ),
@@ -201,6 +203,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
                 ],
               ),
             ),
+    );
+  }
+
+  Container newVideo(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 1.5,
+      child: VideoPlayer(controller),
     );
   }
 }
