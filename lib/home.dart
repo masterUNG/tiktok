@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktok/pages/addvideo.dart';
@@ -99,34 +101,19 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, size: 30),
-              title: Text(
-                "Home",
-                style: mystyle(12),
-              )),
+              label: "Home"),
           BottomNavigationBarItem(
               icon: Icon(Icons.search, size: 30),
-              title: Text(
-                "Search",
-                style: mystyle(12),
-              )),
+              label: "Search"),
           BottomNavigationBarItem(
               icon: customicon(),
-              title: Text(
-                "",
-                style: mystyle(12),
-              )),
+              label: ""),
           BottomNavigationBarItem(
               icon: Icon(Icons.message, size: 30),
-              title: Text(
-                "Messages",
-                style: mystyle(12),
-              )),
+              label:"Messages"),
           BottomNavigationBarItem(
               icon: Icon(Icons.person, size: 30),
-              title: Text(
-                "Profile",
-                style: mystyle(12),
-              ))
+              label: "Profile")
         ],
       ),
     );
