@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ final Map<String, WidgetBuilder> map = {
 String firstState;
 
 Future<void> main() async {
+  HttpOverrides.global = MyHttpOverride();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp().then((value) async {
     FirebaseAuth.instance.authStateChanges().listen((event) {
@@ -25,7 +28,6 @@ Future<void> main() async {
       }
     });
   });
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -40,5 +42,14 @@ class MyApp extends StatelessWidget {
       routes: map,
       initialRoute: firstState,
     );
+  }
+}
+
+class MyHttpOverride extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    // TODO: implement createHttpClient
+    return super.createHttpClient(context)
+      ..badCertificateCallback = ((cert, host, port) => true);
   }
 }

@@ -1,11 +1,15 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, avoid_print
 
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/utility/finduid.dart';
+import 'package:tiktok/utility/my_constant.dart';
+import 'package:tiktok/widgets/show_loading.dart';
 import 'package:tiktok/widgets/show_progress.dart';
 import 'package:video_player/video_player.dart';
 
@@ -68,12 +72,20 @@ class _ConfirmPageState extends State<ConfirmPage> {
   }
 
   uploadvideotostorage(String id) async {
-    UploadTask storageUploadTask =
-        videosfolder.child(id).putFile(await compressvideo());
-    TaskSnapshot storageTaskSnapshot =
-        await storageUploadTask.whenComplete(() {});
-    String downloadurl = await storageTaskSnapshot.ref.getDownloadURL();
-    return downloadurl;
+    // var nameVideo = 'video${Random().nextInt(10000)}.mp4';
+    // Map<String, dynamic> map = {};
+    // map['file'] = await MultipartFile.fromFile(await compressvideo(),
+    //     filename: nameVideo);
+    // FormData formData = FormData.fromMap(map);
+    // await Dio()
+    //     .post(MyConstant.pathSaveVideo, data: formData)
+    //     .then((value) => print('Success upload -->> https://www.androidthai.in.th/bigc/video/$nameVideo'));
+    // UploadTask storageUploadTask =
+    //     videosfolder.child(id).putFile(await compressvideo());
+    // TaskSnapshot storageTaskSnapshot =
+    //     await storageUploadTask.whenComplete(() {});
+    // String downloadurl = await storageTaskSnapshot.ref.getDownloadURL();
+    return 'https://www.androidthai.in.th/bigc/video/demo.mp4';
   }
 
   uploadimagetostorage(String id) async {
@@ -86,9 +98,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
   }
 
   uploadvideo() async {
-    setState(() {
-      isuploading = true;
-    });
+    // setState(() {
+    //   isuploading = true;
+    // });
     try {
       var firebaseuseruid = await FindUid().loginUid();
       print('uploadvideo firebaseuseruid ==>> $firebaseuseruid');
@@ -109,11 +121,10 @@ class _ConfirmPageState extends State<ConfirmPage> {
         'sharecount': 0,
         'songname': musicontroller.text,
         'caption': captioncontroller.text,
-        'videourl': video,
+        'videourl': 'https://www.androidthai.in.th/bigc/video/demo.mp4',
         'previewimage': previewimage
       });
       Navigator.pop(context);
-
     } catch (e) {
       print(e);
     }
@@ -123,15 +134,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isuploading == true
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Uploading......", style: mystyle(25)),
-                  const SizedBox(height: 20),
-                  const ShowProgress(),
-                ],
-              ),
+          ? const Center(
+              child: ShowLoading(),
             )
           : SingleChildScrollView(
               child: Column(
@@ -170,7 +174,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
                                 fillColor: Colors.white,
                                 labelText: "Caption",
                                 labelStyle: mystyle(20),
-                                prefixIcon: Icon(Icons.closed_caption),
+                                prefixIcon: const Icon(Icons.closed_caption),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20))),
                           ),
@@ -178,13 +182,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      RaisedButton(
+                      ElevatedButton(
                         onPressed: () => uploadvideo(),
-                        color: Colors.lightBlue,
+                        style:
+                            ElevatedButton.styleFrom(primary: Colors.lightBlue),
                         child: Text(
                           "Upload Video",
                           style: mystyle(20, Colors.white),
