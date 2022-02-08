@@ -14,7 +14,8 @@ class AddVideoPage extends StatefulWidget {
 }
 
 class _AddVideoPageState extends State<AddVideoPage> {
-  pickvideo(ImageSource src) async {
+
+  Future<void> pickvideo(ImageSource src) async {
     Navigator.pop(context);
     final video = await ImagePicker().getVideo(source: src);
     Navigator.push(
