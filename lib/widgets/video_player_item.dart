@@ -3,7 +3,7 @@ import 'package:video_player/video_player.dart';
 
 class VideoPlayerItem extends StatefulWidget {
   final String videourl;
-  VideoPlayerItem(this.videourl);
+  const VideoPlayerItem(this.videourl, {Key key}) : super(key: key);
   @override
   _VideoPlayerItemState createState() => _VideoPlayerItemState();
 }
@@ -17,7 +17,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     videoPlayerController = VideoPlayerController.network(widget.videourl)
       ..initialize().then((value) {
         videoPlayerController.play();
-        videoPlayerController.setVolume(1);
+        videoPlayerController.setVolume(0.25);
       });
   }
 
@@ -29,7 +29,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: VideoPlayer(videoPlayerController),
