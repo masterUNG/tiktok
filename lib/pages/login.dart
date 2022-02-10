@@ -22,65 +22,68 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.red[200],
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Welcome to TikTok",
-                style: mystyle(25, Colors.black, FontWeight.w600)),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              "Login",
-              style: mystyle(25, Colors.black, FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              child: TextField(
-                controller: emailcontroller,
-                decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email),
-                    labelStyle: mystyle(20),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20))),
+      body: GestureDetector(onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Welcome to TikTok",
+                  style: mystyle(25, Colors.black, FontWeight.w600)),
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              child: TextField(
-                controller: passwordcontroller,
-                decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    labelStyle: mystyle(20),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20))),
+              Text(
+                "Login",
+                style: mystyle(25, Colors.black, FontWeight.w600),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            newLogin(context),
-            const SizedBox(
-              height: 10,
-            ),
-            newRegister(context)
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(left: 20, right: 20),
+                child: TextField(
+                  controller: emailcontroller,
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      labelText: 'Email',
+                      prefixIcon: const Icon(Icons.email),
+                      labelStyle: mystyle(20),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(left: 20, right: 20),
+                child: TextField(
+                  controller: passwordcontroller,
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock),
+                      labelStyle: mystyle(20),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              newLogin(context),
+              const SizedBox(
+                height: 10,
+              ),
+              newRegister(context)
+            ],
+          ),
         ),
       ),
     );
@@ -99,12 +102,12 @@ class _LoginState extends State<Login> {
                 .signInWithEmailAndPassword(email: email, password: password)
                 .then((value) {
               print('Login Success');
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => HomePage(),
-              //     ),
-              //     (route) => false);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false);
             });
           }).catchError((error) {
             MyDialog(context: context).normalDialog(error.code, error.message);
