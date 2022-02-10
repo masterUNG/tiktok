@@ -44,7 +44,7 @@ class _LoginState extends State<Login> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.only(left: 20, right: 20),
-                child: TextField(
+                child: TextField(keyboardType: TextInputType.emailAddress,
                   controller: emailcontroller,
                   decoration: InputDecoration(
                       fillColor: Colors.white,

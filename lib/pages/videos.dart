@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, avoid_print
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok/pages/show_menu_page.dart';
 import 'package:tiktok/widgets/show_progress.dart';
 import 'package:tiktok/widgets/video_player_item.dart';
 
@@ -28,6 +29,7 @@ class VideoPage extends StatefulWidget {
 class _VideoPageState extends State<VideoPage> {
   Stream mystream;
   String uid;
+  PageController pageController;
 
   @override
   initState() {
@@ -35,6 +37,8 @@ class _VideoPageState extends State<VideoPage> {
     //uid = FindUid().loginUid() as String;
     uid = widget.uid;
     mystream = FirebaseFirestore.instance.collection('videos').snapshots();
+
+    pageController = setupPageController(0);
   }
 
   buildprofile(String url) {
@@ -128,6 +132,10 @@ class _VideoPageState extends State<VideoPage> {
         .update({'sharecount': doc.data()['sharecount'] + 1});
   }
 
+  PageController setupPageController(int index) {
+    return PageController(initialPage: index, viewportFraction: 1);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,15 +147,25 @@ class _VideoPageState extends State<VideoPage> {
             }
             return PageView.builder(
                 itemCount: snapshot.data.docs.length,
-                controller: PageController(initialPage: 0, viewportFraction: 1),
+                controller: pageController,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   DocumentSnapshot videos = snapshot.data.docs[index];
-                  return Stack(
-                    children: [
-                      VideoPlayerItem(videos.data()['videourl']),
-                      rightMenu(videos, context),
-                    ],
+                  return GestureDetector(
+                    onHorizontalDragStart: (details) =>
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ShowMenuPage(),
+                            ),
+                            (route) => false),
+                    behavior: HitTestBehavior.opaque,
+                    child: Stack(
+                      children: [
+                        VideoPlayerItem(videos.data()['videourl']),
+                        rightMenu(videos, context),
+                      ],
+                    ),
                   );
                 });
           }),
