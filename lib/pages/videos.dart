@@ -7,6 +7,8 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok/widgets/show_progress.dart';
+import 'package:tiktok/widgets/video_player_item.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:tiktok/pages/comments.dart';
@@ -29,15 +31,16 @@ class _VideoPageState extends State<VideoPage> {
   Stream mystream;
   String uid;
 
+  @override
   initState() {
     super.initState();
     //uid = FindUid().loginUid() as String;
     uid = widget.uid;
-    mystream = videoscollection.snapshots();
+    mystream = FirebaseFirestore.instance.collection('videos').snapshots();
   }
 
   buildprofile(String url) {
-    return Container(
+    return SizedBox(
       width: 60,
       height: 60,
       child: Stack(
@@ -129,15 +132,15 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: StreamBuilder(
           stream: mystream,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const ShowProgress();
             }
             return PageView.builder(
+
                 itemCount: snapshot.data.docs.length,
                 controller: PageController(initialPage: 0, viewportFraction: 1),
                 scrollDirection: Axis.vertical,
@@ -150,7 +153,7 @@ class _VideoPageState extends State<VideoPage> {
                       Column(
                         children: [
                           // top section
-                          Container(
+                          SizedBox(
                             height: 100,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -161,7 +164,7 @@ class _VideoPageState extends State<VideoPage> {
                                   style: mystyle(
                                       17, Colors.white, FontWeight.bold),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Text(
@@ -308,45 +311,6 @@ class _VideoPageState extends State<VideoPage> {
                   );
                 });
           }),
-    );
-  }
-}
-
-class VideoPlayerItem extends StatefulWidget {
-  final String videourl;
-  VideoPlayerItem(this.videourl);
-  @override
-  _VideoPlayerItemState createState() => _VideoPlayerItemState();
-}
-
-class _VideoPlayerItemState extends State<VideoPlayerItem> {
-  VideoPlayerController videoPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    videoPlayerController = VideoPlayerController.network(widget.videourl)
-      ..initialize().then((value) {
-        videoPlayerController.play();
-        videoPlayerController.setVolume(1);
-      });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    videoPlayerController.dispose();
-  }
-
- 
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: VideoPlayer(videoPlayerController),
-     
     );
   }
 }
