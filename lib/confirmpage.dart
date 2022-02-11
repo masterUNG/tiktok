@@ -60,6 +60,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
     }
   }
 
+  
+
   getpreviewimage() async {
     final previewimage = await flutterVideoCompress.getThumbnailWithFile(
       widget.videopath_astring,

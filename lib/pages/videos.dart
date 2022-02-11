@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, avoid_print
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:tiktok/models/data_model.dart';
 import 'package:tiktok/pages/show_menu_page.dart';
 import 'package:tiktok/widgets/show_progress.dart';
 import 'package:tiktok/widgets/video_player_item.dart';
@@ -31,6 +34,8 @@ class _VideoPageState extends State<VideoPage> {
   String uid;
   PageController pageController;
 
+  var datamodels = <DataModel>[];
+
   @override
   initState() {
     super.initState();
@@ -38,7 +43,26 @@ class _VideoPageState extends State<VideoPage> {
     uid = widget.uid;
     mystream = FirebaseFirestore.instance.collection('videos').snapshots();
 
-    pageController = setupPageController(0);
+    readDataJson();
+  }
+
+  Future<void> readDataJson() async {
+    String string = await loadJson();
+    var jsonRes = json.decode(string);
+    var arrayVideo = jsonRes['videos'];
+
+    print('arrayVideo ==> $arrayVideo');
+    for (var item in arrayVideo) {
+      DataModel dataModel = DataModel.fromMap(item);
+      print('#11feb url ===>> ${dataModel.videourl}');
+      setState(() {
+        datamodels.add(dataModel);
+      });
+    }
+  }
+
+  Future<String> loadJson() async {
+    return await rootBundle.loadString('assets/data.json');
   }
 
   buildprofile(String url) {
@@ -139,40 +163,35 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-          stream: mystream,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const ShowProgress();
-            }
-            return PageView.builder(
-                itemCount: snapshot.data.docs.length,
-                controller: pageController,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot videos = snapshot.data.docs[index];
-                  return GestureDetector(
-                    onHorizontalDragStart: (details) =>
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ShowMenuPage(),
-                            ),
-                            (route) => false),
-                    behavior: HitTestBehavior.opaque,
-                    child: Stack(
-                      children: [
-                        VideoPlayerItem(videos.data()['videourl']),
-                        rightMenu(videos, context),
-                      ],
-                    ),
-                  );
-                });
-          }),
+      body: datamodels.isEmpty
+          ? const ShowProgress()
+          : PageView.builder(
+              itemCount: datamodels.length,
+              controller: pageController,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onHorizontalDragStart: (details) =>
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShowMenuPage(),
+                          ),
+                          (route) => false),
+                  behavior: HitTestBehavior.opaque,
+                  child: Stack(
+                    children: [
+                      VideoPlayerItem(datamodels[index].videourl),
+                      rightMenu(datamodels[index], context),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 
-  Column rightMenu(DocumentSnapshot videos, BuildContext context) {
+  Column rightMenu(DataModel dataModel, BuildContext context) {
     return Column(
       children: [
         // top section
@@ -212,10 +231,10 @@ class _VideoPageState extends State<VideoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(videos.data()['username'],
+                    Text(dataModel.username,
                         style: mystyle(15, Colors.white, FontWeight.bold)),
                     Text(
-                      videos.data()['caption'],
+                      dataModel.caption,
                       style: mystyle(15, Colors.white, FontWeight.bold),
                     ),
                     Row(
@@ -226,7 +245,7 @@ class _VideoPageState extends State<VideoPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          videos.data()['songname'],
+                          dataModel.songname,
                           style: mystyle(15, Colors.white, FontWeight.bold),
                         )
                       ],
@@ -242,22 +261,19 @@ class _VideoPageState extends State<VideoPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildprofile(videos.data()['profilepic']),
+                    buildprofile(dataModel.profilepic),
                     Column(
                       children: [
                         InkWell(
-                          onTap: () => likevideo(videos.data()['id']),
-                          child: Icon(Icons.favorite,
-                              size: 55,
-                              color: videos.data()['likes'].contains(uid)
-                                  ? Colors.red
-                                  : Colors.white),
+                          onTap: () => likevideo(dataModel.id),
+                          child: const Icon(Icons.favorite,
+                              size: 55, color: Colors.white),
                         ),
                         const SizedBox(
                           height: 7,
                         ),
                         Text(
-                          videos.data()['likes'].length.toString(),
+                          dataModel.likes.length.toString(),
                           style: mystyle(20, Colors.white),
                         )
                       ],
@@ -269,7 +285,7 @@ class _VideoPageState extends State<VideoPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      CommentsPage(videos.data()['id']))),
+                                      CommentsPage(dataModel.id))),
                           child: const Icon(Icons.comment,
                               size: 55, color: Colors.white),
                         ),
@@ -277,7 +293,7 @@ class _VideoPageState extends State<VideoPage> {
                           height: 7,
                         ),
                         Text(
-                          videos.data()['commentcount'].toString(),
+                          dataModel.commentcount.toString(),
                           style: mystyle(20, Colors.white),
                         )
                       ],
@@ -285,8 +301,8 @@ class _VideoPageState extends State<VideoPage> {
                     Column(
                       children: [
                         InkWell(
-                          onTap: () => sharevideo(
-                              videos.data()['videourl'], videos.data()['id']),
+                          onTap: () =>
+                              sharevideo(dataModel.videourl, dataModel.id),
                           child: const Icon(Icons.reply,
                               size: 55, color: Colors.white),
                         ),
@@ -294,13 +310,12 @@ class _VideoPageState extends State<VideoPage> {
                           height: 7,
                         ),
                         Text(
-                          videos.data()['sharecount'].toString(),
+                          dataModel.sharecount.toString(),
                           style: mystyle(20, Colors.white),
                         )
                       ],
                     ),
-                    CircleAnimation(
-                        buildrotatingprofile(videos.data()['profilepic']))
+                    CircleAnimation(buildrotatingprofile(dataModel.profilepic))
                   ],
                 ),
               )
