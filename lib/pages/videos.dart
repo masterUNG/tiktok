@@ -36,6 +36,8 @@ class _VideoPageState extends State<VideoPage> {
 
   var datamodels = <DataModel>[];
 
+  int indexPage = 0;
+
   @override
   initState() {
     super.initState();
@@ -43,7 +45,13 @@ class _VideoPageState extends State<VideoPage> {
     uid = widget.uid;
     mystream = FirebaseFirestore.instance.collection('videos').snapshots();
 
+    pageController = PageController(initialPage: indexPage);
+
     readDataJson();
+  }
+
+  PageController setupPageController(int index) {
+    return PageController(initialPage: index, viewportFraction: 1);
   }
 
   Future<void> readDataJson() async {
@@ -156,10 +164,6 @@ class _VideoPageState extends State<VideoPage> {
         .update({'sharecount': doc.data()['sharecount'] + 1});
   }
 
-  PageController setupPageController(int index) {
-    return PageController(initialPage: index, viewportFraction: 1);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,13 +175,18 @@ class _VideoPageState extends State<VideoPage> {
               scrollDirection: Axis.vertical,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onHorizontalDragStart: (details) =>
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ShowMenuPage(),
-                          ),
-                          (route) => false),
+                  onHorizontalDragStart: (details) {
+                    // Navigator.pushAndRemoveUntil(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const ShowMenuPage(),
+                    //     ),
+                    //     (route) => false);
+                    indexPage++;
+                    pageController.animateToPage(indexPage,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.bounceInOut);
+                  },
                   behavior: HitTestBehavior.opaque,
                   child: Stack(
                     children: [
