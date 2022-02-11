@@ -190,7 +190,9 @@ class _VideoPageState extends State<VideoPage> {
                   behavior: HitTestBehavior.opaque,
                   child: Stack(
                     children: [
-                      VideoPlayerItem(datamodels[index].videourl),
+                      VideoPlayerItem(datamodels[index].videourl, () {
+                        print('Test');
+                      }),
                       rightMenu(datamodels[index], context),
                     ],
                   ),
