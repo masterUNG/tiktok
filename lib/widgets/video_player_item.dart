@@ -29,11 +29,12 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     dataModels = widget.dataModels;
     indexVideo = widget.indexVideo;
 
-    videoPlayerController = VideoPlayerController.network(dataModels[indexVideo].videourl)
-      ..initialize().then((value) {
-        videoPlayerController.play();
-        videoPlayerController.setVolume(0.1);
-      });
+    videoPlayerController =
+        VideoPlayerController.network(dataModels[indexVideo].videourl)
+          ..initialize().then((value) {
+            videoPlayerController.play();
+            videoPlayerController.setVolume(0.1);
+          });
 
     // var myendFunc = widget.endFunc;
 
@@ -43,13 +44,16 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         print('######## video End');
 
         setState(() {
-          videoPlayerController = VideoPlayerController.network(dataModels[indexVideo + 1].videourl)
+          if (indexVideo + 1 >= dataModels.length) {
+            indexVideo = 0;
+          } 
+          videoPlayerController =
+              VideoPlayerController.network(dataModels[indexVideo + 1].videourl)
                 ..initialize().then((value) {
-          videoPlayerController.play();
-          videoPlayerController.setVolume(0.1);
+                  videoPlayerController.play();
+                  videoPlayerController.setVolume(0.1);
                 });
         });
-        
       }
     });
   }
