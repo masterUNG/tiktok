@@ -41,12 +41,12 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.duration ==
           videoPlayerController.value.position) {
-        print('######## video End');
+        print('######## video End indexVideo ==> $indexVideo');
 
-        setState(() {
-          if (indexVideo + 1 >= dataModels.length) {
+        if (indexVideo + 1 >= dataModels.length) {
             indexVideo = 0;
-          } 
+          }
+        setState(() {
           videoPlayerController =
               VideoPlayerController.network(dataModels[indexVideo + 1].videourl)
                 ..initialize().then((value) {
