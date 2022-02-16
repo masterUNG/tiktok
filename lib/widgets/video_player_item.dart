@@ -44,8 +44,8 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         print('######## video End indexVideo ==> $indexVideo');
 
         if (indexVideo + 1 >= dataModels.length) {
-            indexVideo = 0;
-          }
+          indexVideo = 0;
+        }
         setState(() {
           videoPlayerController =
               VideoPlayerController.network(dataModels[indexVideo + 1].videourl)
@@ -69,7 +69,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      child: VideoPlayer(videoPlayerController),
+      child: VideoPlayer(
+        videoPlayerController,
+      ),
     );
   }
 }
